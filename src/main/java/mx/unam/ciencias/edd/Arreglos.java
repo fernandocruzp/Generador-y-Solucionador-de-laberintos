@@ -1,7 +1,5 @@
 package mx.unam.ciencias.edd;
-
 import java.util.Comparator;
-
 /**
  * Clase para ordenar y buscar arreglos genéricos.
  */
@@ -9,16 +7,41 @@ public class Arreglos {
 
     /* Constructor privado para evitar instanciación. */
     private Arreglos() {}
+    private static int b=0;
+    private static int a=-1;
+    private static <T> void intercambiar(T[] arreglo, int i, int m){
+	T j=arreglo[i];
+	arreglo[i]=arreglo[m];
+	arreglo[m]=j;
+    }
 
+    private static <T> void quickSort(T[] arreglo, Comparator<T> comparador, int a, int b){
+	if(b<=a)
+	    return;
+	int i=a+1;
+	int j=b;
+	while(i<j)
+	    if(comparador.compare(arreglo[i],arreglo[a])>0 && comparador.compare(arreglo[j],arreglo[a])<=0)
+		intercambiar(arreglo,i++,j--);
+	    else if(comparador.compare(arreglo[i],arreglo[a])<=0)
+		i++;
+	    else
+		j--;
+	if(comparador.compare(arreglo[i],arreglo[a])>0)
+	    i--;
+	intercambiar(arreglo,a,i);
+	quickSort(arreglo,comparador,a,i-1);
+	quickSort(arreglo,comparador,i+1,b);
+	
+    }
     /**
      * Ordena el arreglo recibido usando QickSort.
      * @param <T> tipo del que puede ser el arreglo.
      * @param arreglo el arreglo a ordenar.
      * @param comparador el comparador para ordenar el arreglo.
      */
-    public static <T> void
-    quickSort(T[] arreglo, Comparator<T> comparador) {
-        // Aquí va su código.
+    public static <T> void quickSort(T[] arreglo, Comparator<T> comparador) {
+	quickSort(arreglo,comparador,0,arreglo.length-1);
     }
 
     /**
@@ -39,7 +62,15 @@ public class Arreglos {
      */
     public static <T> void
     selectionSort(T[] arreglo, Comparator<T> comparador) {
-        // Aquí va su código.
+        for(int i=0;i<arreglo.length;i++){
+	    int m = i;
+	    for(int j=i+1;j<arreglo.length;j++){
+		if(comparador.compare(arreglo[j],arreglo[m])<0){
+		    m=j;
+		}
+	    }
+	    intercambiar(arreglo,i,m);
+	}
     }
 
     /**
@@ -52,6 +83,15 @@ public class Arreglos {
         selectionSort(arreglo, (a, b) -> a.compareTo(b));
     }
 
+    private static <T> int busquedaBinaria(T[] arreglo, T elemento, Comparator<T> comparador,int a, int b) {
+	if(b<a) return -1;
+	int m=a+((b-a)/2);
+	if(comparador.compare(arreglo[m],elemento)==0) return m;
+	else if(comparador.compare(arreglo[m],elemento)>0)
+	    return busquedaBinaria(arreglo,elemento,comparador,a,m-1);
+	else
+	    return busquedaBinaria(arreglo,elemento,comparador,m+1,b);
+    }
     /**
      * Hace una búsqueda binaria del elemento en el arreglo. Regresa el índice
      * del elemento en el arreglo, o -1 si no se encuentra.
@@ -61,10 +101,10 @@ public class Arreglos {
      * @param comparador el comparador para hacer la búsqueda.
      * @return el índice del elemento en el arreglo, o -1 si no se encuentra.
      */
-    public static <T> int
-    busquedaBinaria(T[] arreglo, T elemento, Comparator<T> comparador) {
-        // Aquí va su código.
+    public static <T> int busquedaBinaria(T[] arreglo, T elemento, Comparator<T> comparador) {
+	return busquedaBinaria(arreglo,elemento,comparador,0,arreglo.length-1);
     }
+    
 
     /**
      * Hace una búsqueda binaria del elemento en el arreglo. Regresa el índice

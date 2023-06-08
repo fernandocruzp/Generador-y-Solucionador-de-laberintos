@@ -22,7 +22,7 @@ public abstract class MeteSaca<T> {
          * @param elemento el elemento del nodo.
          */
         public Nodo(T elemento) {
-            // Aquí va su código.
+            this.elemento=elemento;
         }
     }
 
@@ -42,8 +42,12 @@ public abstract class MeteSaca<T> {
      * @return el elemento en un extremo de la estructura.
      * @throws NoSuchElementException si la estructura está vacía.
      */
-    public T saca() {
-        // Aquí va su código.
+    public T saca() throws NoSuchElementException{
+        if(cabeza==null) throw new NoSuchElementException();
+	T eleme= cabeza.elemento;
+	cabeza=cabeza.siguiente;
+	if(cabeza==null) rabo=null;
+	return eleme;
     }
 
     /**
@@ -52,8 +56,10 @@ public abstract class MeteSaca<T> {
      * @return el elemento en un extremo de la estructura.
      * @throws NoSuchElementException si la estructura está vacía.
      */
-    public T mira() {
-        // Aquí va su código.
+    public T mira() throws NoSuchElementException{
+        if(cabeza==null) throw new NoSuchElementException();
+	T eleme= cabeza.elemento;
+	return eleme;
     }
 
     /**
@@ -62,7 +68,7 @@ public abstract class MeteSaca<T> {
      *         <code>false</code> en otro caso.
      */
     public boolean esVacia() {
-        // Aquí va su código.
+         return cabeza==null;
     }
 
     /**
@@ -72,10 +78,20 @@ public abstract class MeteSaca<T> {
      *         misma clase que la estructura, y sus elementos son iguales en el
      *         mismo orden; <code>false</code> en otro caso.
      */
-    @Override public boolean equals(Object object) {
-        if (object == null || getClass() != object.getClass())
-            return false;
-        @SuppressWarnings("unchecked") MeteSaca<T> m = (MeteSaca<T>)object;
-        // Aquí va su código.
+    @Override public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+	    return false;
+	@SuppressWarnings("unchecked")
+	    MeteSaca<T> lista = (MeteSaca<T>)o;
+	Nodo n=cabeza;
+	Nodo cosa=lista.cabeza;
+	while(n!=null && cosa!=null){
+	    if(!n.elemento.equals(cosa.elemento)){
+		return false;
+	    }
+	    n=n.siguiente;
+	    cosa=cosa.siguiente;
+	}
+	return n==cosa;
     }
 }
