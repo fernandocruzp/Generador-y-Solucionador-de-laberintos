@@ -1,0 +1,159 @@
+--- src/main/java/mx/unam/ciencias/edd/ArbolAVL.java
++++ src/main/java/mx/unam/ciencias/edd/ArbolAVL.java
+@@ -22,7 +22,7 @@ public class ArbolAVL<T extends Comparable<T>>
+          * @param elemento el elemento del vértice.
+          */
+         public VerticeAVL(T elemento) {
+-            // Aquí va su código.
++            super(elemento);
+         }
+ 
+         /**
+@@ -30,7 +30,7 @@ public class ArbolAVL<T extends Comparable<T>>
+          * @return la altura del vértice.
+          */
+         @Override public int altura() {
+-            // Aquí va su código.
++            return altura;
+         }
+ 
+         /**
+@@ -38,7 +38,8 @@ public class ArbolAVL<T extends Comparable<T>>
+          * @return una representación en cadena del vértice AVL.
+          */
+         @Override public String toString() {
+-            // Aquí va su código.
++	    String str=elemento+" "+altura+"/"+balance();
++	    return str;
+         }
+ 
+         /**
+@@ -55,8 +56,22 @@ public class ArbolAVL<T extends Comparable<T>>
+             if (objeto == null || getClass() != objeto.getClass())
+                 return false;
+             @SuppressWarnings("unchecked") VerticeAVL vertice = (VerticeAVL)objeto;
+-            // Aquí va su código.
++            return (altura == vertice.altura && super.equals(objeto));
+         }
++
++	private int balance(){
++	    if(izquierdo!=null && derecho!=null)
++		return izquierdo.altura() - derecho.altura();
++	    if(izquierdo!=null)
++		return izquierdo.altura() +1;
++	    if(derecho!=null)
++		return (-1)-derecho.altura();
++	    return 0;
++	}
++
++	private int alturaSuper(){
++	    return super.altura();
++	}
+     }
+ 
+     /**
+@@ -80,7 +95,7 @@ public class ArbolAVL<T extends Comparable<T>>
+      * @return un nuevo vértice con el elemento recibido dentro del mismo.
+      */
+     @Override protected Vertice nuevoVertice(T elemento) {
+-        // Aquí va su código.
++        return new VerticeAVL(elemento);
+     }
+ 
+     /**
+@@ -90,7 +105,8 @@ public class ArbolAVL<T extends Comparable<T>>
+      * @param elemento el elemento a agregar.
+      */
+     @Override public void agrega(T elemento) {
+-        // Aquí va su código.
++	super.agrega(elemento);
++	balancea((VerticeAVL)ultimoAgregado.padre);
+     }
+ 
+     /**
+@@ -99,7 +115,84 @@ public class ArbolAVL<T extends Comparable<T>>
+      * @param elemento el elemento a eliminar del árbol.
+      */
+     @Override public void elimina(T elemento) {
+-        // Aquí va su código.
++        VerticeAVL eliminar = (VerticeAVL)(busca(elemento));
++	if(eliminar == null)
++	    return;
++	elementos--;
++	if(eliminar.izquierdo != null && eliminar.derecho != null)
++	    eliminar=(VerticeAVL)intercambiaEliminable(eliminar);
++	VerticeAVL padre = (VerticeAVL)eliminar.padre;
++	eliminaVertice(eliminar);
++	balancea(padre);
++    }
++    private int max(int a, int b){
++	return a>b ? a : b;
++    }
++    private int alt(VerticeAVL v){
++	if(v==null)
++	    return -1;
++	return v.altura();
++    }
++    private void balancea(VerticeAVL vertice){
++	if(vertice==null)
++	    return;
++	vertice.altura=vertice.alturaSuper();
++	int balance= vertice.balance();
++	boolean cambio=false;
++	VerticeAVL padreF=(VerticeAVL)vertice.padre;
++	if(balance==-2){
++	    VerticeAVL p = (VerticeAVL)vertice.izquierdo;
++	    VerticeAVL q = (VerticeAVL)vertice.derecho;
++	    VerticeAVL x = (VerticeAVL)q.izquierdo;
++	    VerticeAVL y = (VerticeAVL)q.derecho;
++	    int balanceQ=q.balance();
++	    if(balanceQ==1){
++		super.giraDerecha(q);
++		q.altura=q.alturaSuper();
++		x.altura=x.alturaSuper();
++		q = (VerticeAVL)vertice.derecho;
++		x = (VerticeAVL)q.izquierdo;
++		y = (VerticeAVL)q.derecho;
++		balanceQ=q.balance();
++	    }
++	    if(balanceQ==-1 || balanceQ==0 || balanceQ==-2){
++		super.giraIzquierda(vertice);
++		vertice.altura=vertice.alturaSuper();
++		q.altura=q.alturaSuper();
++		cambio=true;
++	    }
++	    if(cambio)
++		padreF=(VerticeAVL)q.padre;
++	    else
++		padreF=(VerticeAVL)p.padre;
++	}
++	else if(balance==2){
++	    VerticeAVL p = (VerticeAVL)vertice.izquierdo;
++	    VerticeAVL q = (VerticeAVL)vertice.derecho;
++	    VerticeAVL x = (VerticeAVL)p.izquierdo;
++	    VerticeAVL y = (VerticeAVL)p.derecho;
++	    int balanceP=p.balance();
++	    if(balanceP==-1){
++		super.giraIzquierda(p);
++		p.altura=p.alturaSuper();
++		y.altura=y.alturaSuper();
++		p = (VerticeAVL)vertice.izquierdo;
++		x = (VerticeAVL)p.izquierdo;
++		y = (VerticeAVL)p.derecho;
++		balanceP=p.balance();
++	    }
++	    if(balanceP==1 || balanceP==0 || balanceP==2){
++		super.giraDerecha(vertice);
++		vertice.altura=vertice.alturaSuper();
++		p.altura=p.alturaSuper();
++		cambio=true;
++	    }
++	    if(cambio)
++		padreF=(VerticeAVL)p.padre;
++	    else
++		padreF=(VerticeAVL)vertice.padre;
++	}
++	balancea(padreF);
+     }
+ 
+     /**
