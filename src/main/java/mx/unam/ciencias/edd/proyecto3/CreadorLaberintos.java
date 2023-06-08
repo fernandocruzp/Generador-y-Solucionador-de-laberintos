@@ -76,6 +76,8 @@ public class CreadorLaberintos {
     }
 
     public byte[] generarLaberinto(){
+        int cc=columnas*filas;
+        byte [] laberinto=new byte[cc];
         for(int i=0; i<columnas;i++)
             for(int j=0; j<filas;j++){
                 Celda celda = new Celda(i,j);
@@ -84,14 +86,25 @@ public class CreadorLaberintos {
             }
         grafica=graficaConexa();
         arbolGenerador=krusttal();
-        return null;
+        int m=r.nextInt(filas);
+        int f=r.nextInt(filas);
+        int i=0;
+        for(Celda c: arbolGenerador){
+            if(c.getX()==0 && c.getY()==m)
+                c.setValor((byte)(c.valor^4));
+            else if(c.getX()==columnas-1 && c.getY()==f)
+                c.setValor((byte)(c.valor^1));
+            laberinto[i]=c.valor;
+            i++;
+        }
+        return laberinto;
     }
 
     private Grafica<Celda> graficaConexa(){
         int i=0;
         for(Celda c : grafica){
             try{
-                c.setValor((byte) r.nextInt(15));
+                c.setValor((byte) (r.nextInt(14) +1));
                 if(c.getX()-1>=0)
                     grafica.conecta(c,new Celda(c.getX()-1,c.getY()),1);
                 if(c.getX()+1<columnas)
@@ -102,7 +115,6 @@ public class CreadorLaberintos {
                     grafica.conecta(c,new Celda(c.getX(),c.getY()+1),1);
             }
             catch (NoSuchElementException e){
-                System.out.println(i);
             }
             catch (IllegalArgumentException il){
             }
@@ -121,33 +133,51 @@ public class CreadorLaberintos {
         for(Celda c : grafica){
             boolean arriba=false;
             int m = r.nextInt(grafica.vertice(c).getGrado());
-            if(m==grafica.vertice(c).getGrado())
+            if(m>grafica.vertice(c).getGrado()) {
                 arriba=true;
+            }
             int i=0;
             Pila<Celda> vecinos=new Pila<>();
             for(VerticeGrafica ci: grafica.vertice(c).vecinos()){
                 Celda celda = (Celda)ci.get();
                 vecinos.mete(celda);
-                if(i==m){
+                if(i==m) {
                     if(esCiclo(celda,c)&&arriba) {
                         Celda celda1=vecinos.saca();
                         int suma= celda1.valor+c.valor;
+                        byte va = (byte)((c.valor<<4)|15);
+                        c.setValor((byte)va);
                         arbolGenerador.conecta(c,celda1,suma);
+                        break;
                     }
                     else if(esCiclo(celda,c))
                         continue;
                     else{
-                        int suma=celda.valor+c.valor;
+                        byte suma= (byte) (celda.valor+c.valor);
+                        byte va = (byte)((c.valor<<4)|15);
+                        va^=analiza(c,celda);
+                        c.setValor((byte)va);
                         arbolGenerador.conecta(c, celda,suma);
+                        break;
                     }
                 }
+                i++;
             }
         }
-        System.out.println(grafica);
-        System.out.println(arbolGenerador);
-        System.out.println(arbolGenerador.getAristas());
-        /****/
         return grafica;
+    }
+
+    private byte analiza(Celda c, Celda v){
+        byte m=0;
+        if(c.getX()==v.getX()-1)
+            m=1;
+        if(c.getX()==v.getX()+1)
+            m=4;
+        if(c.getX()==v.getY()-1)
+            m=8;
+        if(c.getX()==v.getY()+1)
+            m=2;
+        return m;
     }
 
 
