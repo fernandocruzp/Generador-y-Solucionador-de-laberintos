@@ -104,7 +104,7 @@ public class CreadorLaberintos {
         int i=0;
         for(Celda c : grafica){
             try{
-                c.setValor((byte) (r.nextInt(14) +1));
+                //c.setValor((byte) (r.nextInt(14) +1));
                 if(c.getX()-1>=0)
                     grafica.conecta(c,new Celda(c.getX()-1,c.getY()),1);
                 if(c.getX()+1<columnas)
@@ -129,11 +129,10 @@ public class CreadorLaberintos {
         return false;
     }
     private Grafica<Celda> krusttal(){
-        Lista<Diccionario<Lista<Celda>,Integer>> lista=new Lista<>();
         for(Celda c : grafica){
             boolean arriba=false;
             int m = r.nextInt(grafica.vertice(c).getGrado());
-            if(m>grafica.vertice(c).getGrado()) {
+            if(m>=grafica.vertice(c).getGrado()) {
                 arriba=true;
             }
             int i=0;
@@ -144,8 +143,9 @@ public class CreadorLaberintos {
                 if(i==m) {
                     if(esCiclo(celda,c)&&arriba) {
                         Celda celda1=vecinos.saca();
-                        int suma= celda1.valor+c.valor;
-                        byte va = (byte)((c.valor<<4)|15);
+                        int suma= suma(celda1.valor,c.valor);
+                        byte va = 15;//(byte)((c.valor<<4)|15);
+                        va|=analiza(c,celda1);
                         c.setValor((byte)va);
                         arbolGenerador.conecta(c,celda1,suma);
                         break;
@@ -153,9 +153,9 @@ public class CreadorLaberintos {
                     else if(esCiclo(celda,c))
                         continue;
                     else{
-                        byte suma= (byte) (celda.valor+c.valor);
-                        byte va = (byte)((c.valor<<4)|15);
-                        va^=analiza(c,celda);
+                        int suma=suma(celda.valor,c.valor)+1;
+                        byte va = 15;//(byte)((c.valor<<4)|15);
+                        va|=analiza(c,celda);
                         c.setValor((byte)va);
                         arbolGenerador.conecta(c, celda,suma);
                         break;
@@ -164,7 +164,13 @@ public class CreadorLaberintos {
                 i++;
             }
         }
-        return grafica;
+        System.out.println(arbolGenerador);
+        return arbolGenerador;
+    }
+
+    private int suma(int valor, int valor2){
+        int suma=valor+valor2;
+        return (suma > 0)? suma : suma*-1;
     }
 
     private byte analiza(Celda c, Celda v){

@@ -27,10 +27,12 @@ mx/unam/ciencias/edd/MonticuloArreglo.class
 mx/unam/ciencias/edd/Grafica$Vertice.class
 mx/unam/ciencias/edd/Coleccion.class
 mx/unam/ciencias/edd/MeteSaca$Nodo.class
+mx/unam/ciencias/edd/proyecto3/RealizadorLaberintos.class
 mx/unam/ciencias/edd/proyecto3/Dibujante.class
 mx/unam/ciencias/edd/ArbolRojinegro$VerticeRojinegro.class
 mx/unam/ciencias/edd/VerticeArbolBinario.class
 mx/unam/ciencias/edd/ArbolAVL$VerticeAVL.class
+mx/unam/ciencias/edd/proyecto3/RealizadorLaberintos$Celda.class
 mx/unam/ciencias/edd/IteradorLista.class
 mx/unam/ciencias/edd/Lista$Nodo.class
 mx/unam/ciencias/edd/Pila.class
