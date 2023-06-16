@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 public class CreadorLaberintos {
 
-    private class Celda{
+    private class Celda implements Comparable{
         int x, y;
         byte valor;
 
@@ -51,8 +51,16 @@ public class CreadorLaberintos {
             return "Celda{" +
                     "x=" + x +
                     ", y=" + y +
-                    ", valor=" + valor +
+                    ", valor=" + (valor&0xFF) +
                     '}';
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            if(this.equals(o))
+                return 0;
+            @SuppressWarnings("unchecked") Celda c = (Celda) o;
+            return c.valor-valor;
         }
     }
     private int columnas, filas;
@@ -78,14 +86,16 @@ public class CreadorLaberintos {
     public byte[] generarLaberinto(){
         int cc=columnas*filas;
         byte [] laberinto=new byte[cc];
-        for(int i=0; i<columnas;i++)
-            for(int j=0; j<filas;j++){
-                Celda celda = new Celda(i,j);
+        for(int i=0; i<filas;i++)
+            for(int j=0; j<columnas;j++){
+                Celda celda = new Celda(j,i);
                 grafica.agrega(celda);
                 arbolGenerador.agrega(celda);
             }
         grafica=graficaConexa();
-        arbolGenerador=krusttal();
+        //System.out.println(esCiclo(grafica));
+        //System.out.println(esCiclo(arbolGenerador));
+        kruskal();
         int m=r.nextInt(filas);
         int f=r.nextInt(filas);
         int i=0;
@@ -95,6 +105,7 @@ public class CreadorLaberintos {
             else if(c.getX()==columnas-1 && c.getY()==f)
                 c.setValor((byte)(c.valor^1));
             laberinto[i]=c.valor;
+            System.out.println(laberinto[i]&0xFF&15);
             i++;
         }
         return laberinto;
@@ -104,7 +115,8 @@ public class CreadorLaberintos {
         int i=0;
         for(Celda c : grafica){
             try{
-                //c.setValor((byte) (r.nextInt(14) +1));
+                Random n= new Random();
+                c.setValor((byte)((n.nextInt(15)<<4 )| 15));
                 if(c.getX()-1>=0)
                     grafica.conecta(c,new Celda(c.getX()-1,c.getY()),1);
                 if(c.getX()+1<columnas)
@@ -123,49 +135,87 @@ public class CreadorLaberintos {
         //System.out.println(arbolGenerador);
         return grafica;
     }
-    private boolean esCiclo(Celda c, Celda c2){
-        if(arbolGenerador.sonVecinos(c,c2))
-            return true;
+    private boolean esCiclo(Grafica<Celda> celdas){
+        Lista<Celda> visitados= new Lista<>();
+        for(Celda v: celdas){
+            boolean b=(tieneCiclo(celdas,v,null,visitados));
+            if(!(visitados.contiene(v) )&& tieneCiclo(celdas ,v,null,visitados))
+                return true;
+        }
         return false;
     }
-    private Grafica<Celda> krusttal(){
+
+    private boolean tieneCiclo(Grafica<Celda>celdas,Celda c, Celda padre, Lista<Celda> visitados){
+        visitados.agrega(c);
+        for(VerticeGrafica vecino : celdas.vertice(c).vecinos()){
+            Celda celda = (Celda) vecino.get();
+            if(!visitados.contiene(celda))
+                if(tieneCiclo(celdas,celda,c,visitados)){
+                    return true;}
+            else if(celda.equals(padre)){
+                return false;}
+            else{
+                return true;}
+        }
+        return false;
+    }
+    private void kruskal(){
         for(Celda c : grafica){
-            boolean arriba=false;
-            int m = r.nextInt(grafica.vertice(c).getGrado());
-            if(m>=grafica.vertice(c).getGrado()) {
-                arriba=true;
-            }
-            int i=0;
-            Pila<Celda> vecinos=new Pila<>();
+            Lista<Celda> vecinos= new Lista<>();
             for(VerticeGrafica ci: grafica.vertice(c).vecinos()){
-                Celda celda = (Celda)ci.get();
-                vecinos.mete(celda);
-                if(i==m) {
-                    if(esCiclo(celda,c)&&arriba) {
-                        Celda celda1=vecinos.saca();
-                        int suma= suma(celda1.valor,c.valor);
-                        byte va = 15;//(byte)((c.valor<<4)|15);
-                        va|=analiza(c,celda1);
-                        c.setValor((byte)va);
-                        arbolGenerador.conecta(c,celda1,suma);
-                        break;
-                    }
-                    else if(esCiclo(celda,c))
-                        continue;
-                    else{
-                        int suma=suma(celda.valor,c.valor)+1;
-                        byte va = 15;//(byte)((c.valor<<4)|15);
-                        va|=analiza(c,celda);
-                        c.setValor((byte)va);
-                        arbolGenerador.conecta(c, celda,suma);
-                        break;
-                    }
-                }
-                i++;
+                Celda celda = (Celda) ci.get();
+                vecinos.agrega(celda);
             }
+            int m = r.nextInt(vecinos.getElementos());
+            Celda ve= vecinos.get(m);
+            if(!arbolGenerador.sonVecinos(c,ve))
+                arbolGenerador.conecta(c,ve);
+            while((esCiclo(arbolGenerador) || arbolGenerador.sonVecinos(c,ve) )&& vecinos.esVacia()){
+                arbolGenerador.desconecta(c,ve);
+                vecinos.elimina(ve);
+                if(m>=vecinos.getElementos()&&vecinos.getElementos()!=0)
+                    m--;
+                if (vecinos.getElementos()==0)
+                    break;
+                ve=vecinos.get(m);
+                if(!arbolGenerador.sonVecinos(c,ve))
+                    arbolGenerador.conecta(c,ve);
+            }
+            byte va = (byte)(c.valor&15);//(byte)((c.valor<<4)|15);
+            byte otro= (byte)(ve.valor&15);
+            System.out.println(va);
+            System.out.println(otro);
+            byte ors= analiza(c,ve);
+            byte l=0;
+            va&=ors;
+            va|=240;
+            switch (ors){
+                case 14:
+                    l=11;
+                    break;
+                case 11:
+                    l=14;
+                    break;
+                case 7:
+                    l=13;
+                    break;
+                case 13:
+                    l=7;
+                    break;
+            }
+            otro&=l;
+            otro|=240;
+            System.out.println(c);
+            System.out.println(ve);
+            System.out.println((byte)(va&0xFF));
+            System.out.println((byte)(otro&0XFF));
+            c.setValor((byte)(va&c.valor));
+            ve.setValor((byte)(otro&ve.valor));
+            System.out.println(c);
+            System.out.println(ve);
+
         }
         System.out.println(arbolGenerador);
-        return arbolGenerador;
     }
 
     private int suma(int valor, int valor2){
@@ -176,13 +226,13 @@ public class CreadorLaberintos {
     private byte analiza(Celda c, Celda v){
         byte m=0;
         if(c.getX()==v.getX()-1)
-            m=1;
+            m=14;
         if(c.getX()==v.getX()+1)
-            m=4;
-        if(c.getX()==v.getY()-1)
-            m=8;
-        if(c.getX()==v.getY()+1)
-            m=2;
+            m=11;
+        if(c.getY()==v.getY()-1)
+            m=7;
+        if(c.getY()==v.getY()+1)
+            m=13;
         return m;
     }
 
