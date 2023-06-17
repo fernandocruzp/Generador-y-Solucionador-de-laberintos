@@ -90,6 +90,7 @@ public class RealizadorLaberintos {
             }
             if(celdaIzq(c.valor)){
                if(c.getX()==0) {
+                   i++;
                    ini=c;
                }
                else{
@@ -102,6 +103,7 @@ public class RealizadorLaberintos {
             }
             if(celdaDer(c.valor)){
                 if(c.getX()==arreglo[0].length-1) {
+                    i++;
                     fin=c;
                 }
                 else{
@@ -121,20 +123,33 @@ public class RealizadorLaberintos {
                     grafica.conecta(c,ci,suma);
                 }catch (NoSuchElementException n){} catch (IllegalArgumentException il){}
             }
-            i++;
+        }
+        if(i!=2){
+            System.out.println("Laberinto inválido, tiene más de una entrada y sálida");
+            System.exit(0);
         }
     }
     public Lista<Integer[]> resolver(){
-        Lista<VerticeGrafica<Celda>> camino=grafica.trayectoriaMinima(ini,fin);
-        Lista<Integer[]> r = new Lista<>();
-        for(VerticeGrafica c: camino){
-            Integer[] m = new Integer[2];
-            Celda ci = (Celda) c.get();
-            m[0]=ci.getX();
-            m[1]=ci.getY();
-            r.agrega(m);
+        try {
+            Lista<VerticeGrafica<Celda>> camino = grafica.trayectoriaMinima(ini, fin);
+            Lista<Integer[]> r = new Lista<>();
+            for(VerticeGrafica c: camino){
+                Integer[] m = new Integer[2];
+                Celda ci = (Celda) c.get();
+                m[0]=ci.getX();
+                m[1]=ci.getY();
+                r.agrega(m);
+            }
+            return r;
+        }catch (NoSuchElementException s){
+            System.out.println("Laberinto inválido, no tiene entrada o sálida");
+            System.exit(0);
         }
-        return r;
+        catch (IllegalArgumentException m){
+            System.out.println("El laberinto no tiene solución");
+            System.exit(0);
+        }
+        return null;
     }
     private boolean celdaSup(byte b){
         b&=15;

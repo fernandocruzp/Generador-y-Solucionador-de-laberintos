@@ -16,6 +16,10 @@ public class Dibujante{
         RealizadorLaberintos r = new RealizadorLaberintos(arreglo);
         r.conectar();
         Lista<Integer[]> sol= r.resolver();
+        if(sol.esVacia()) {
+            System.out.println("Laberinto sin solución");
+            System.exit(0);
+        }
         String solucion="";
         solucion = dibujarSolucion(sol);
         return abrirSVG(arreglo[0].length*60, arreglo.length*60) + cuadricula + solucion+ cerrarSVG();
