@@ -103,7 +103,6 @@ public class CreadorLaberintos {
             else if(c.getX()==columnas-1 && c.getY()==f)
                 c.setValor((byte)(c.valor^1));
             laberinto[i]=c.valor;
-            //System.out.println(laberinto[i]&0xFF&15);
             i++;
         }
         return laberinto;
@@ -113,8 +112,7 @@ public class CreadorLaberintos {
         int i=0;
         for(Celda c : grafica){
             try{
-                Random n= new Random();
-                c.setValor((byte)((n.nextInt(15)<<4 )| 15));
+                c.setValor((byte)((r.nextInt(15)<<4 )| 15));
                 if(c.getX()-1>=0)
                     grafica.conecta(c,new Celda(c.getX()-1,c.getY()),1);
                 if(c.getX()+1<columnas)
@@ -160,7 +158,7 @@ public class CreadorLaberintos {
         Lista<Celda> vertices= new Lista<Celda>();
         for(Celda c: grafica)
             vertices.agrega(c);
-        vertices=Lista.mergeSort(vertices);
+        vertices=(Lista<Celda>) Lista.mergeSort(vertices);
         for(Celda c: vertices) {
             Lista<Celda> vecinos = new Lista<>();
             for (VerticeGrafica ci : grafica.vertice(c).vecinos()) {

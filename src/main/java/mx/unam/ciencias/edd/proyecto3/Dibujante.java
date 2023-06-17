@@ -15,7 +15,6 @@ public class Dibujante{
                 cuadricula += dibujarRecuadro(arreglo[j][i], i+1, j+1);
         RealizadorLaberintos r = new RealizadorLaberintos(arreglo);
         r.conectar();
-        //System.out.println(r.getGrafica().esConexa());
         Lista<Integer[]> sol= r.resolver();
         String solucion="";
         solucion = dibujarSolucion(sol);

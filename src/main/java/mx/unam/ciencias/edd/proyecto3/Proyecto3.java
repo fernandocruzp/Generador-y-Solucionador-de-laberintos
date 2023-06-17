@@ -6,6 +6,7 @@ import java.io.*;
 
 public class Proyecto3 {
     public static void main(String args[]) throws IOException {
+
         if(args[2].equals("1")){
             byte[][] byteArray=leerArchivo();
             Dibujante dibujante=new Dibujante(byteArray);
