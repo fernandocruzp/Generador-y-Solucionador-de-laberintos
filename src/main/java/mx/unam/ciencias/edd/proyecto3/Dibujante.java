@@ -1,6 +1,7 @@
 package mx.unam.ciencias.edd.proyecto3;
 
 import mx.unam.ciencias.edd.Grafica;
+import mx.unam.ciencias.edd.Lista;
 
 public class Dibujante{
     byte[][] arreglo;
@@ -11,14 +12,17 @@ public class Dibujante{
         String cuadricula = "";
         for(int i = 0; i < arreglo.length; i++)
             for(int j = 0; j < arreglo[0].length; j++)
-                cuadricula += dibujarRecuadro(arreglo[j][i], i, j);
+                cuadricula += dibujarRecuadro(arreglo[j][i], i+1, j+1);
         RealizadorLaberintos r = new RealizadorLaberintos(arreglo);
         r.conectar();
-        System.out.println(r.resolver());
-        return abrirSVG(arreglo[0].length*60, arreglo.length*60) + cuadricula + cerrarSVG();
+        //System.out.println(r.getGrafica().esConexa());
+        Lista<Integer[]> sol= r.resolver();
+        String solucion="";
+        solucion = dibujarSolucion(sol);
+        return abrirSVG(arreglo[0].length*60, arreglo.length*60) + cuadricula + solucion+ cerrarSVG();
     }
     private String abrirSVG(int tamanoX, int tamanoY){
-        return "<?xml version='1.0' encoding='UTF-8' ?>" + '\n' +"<svg width='" + tamanoX + "' height='" + tamanoY + "' >" + '\n' + "<g>";
+        return "<?xml version='1.0' encoding='UTF-8' ?>" + '\n' +"<svg width='" + (tamanoX+100)+ "' height='" + (tamanoY+100) + "' >" + '\n' + "<g>";
     }
     private String cerrarSVG(){
         return "</g>" +'\n' + "</svg>" + '\n';
@@ -34,6 +38,21 @@ public class Dibujante{
         if(puertaAbajo(valor))
             res += dibujarAbajo(posicionX, posicionY);
         return res;
+    }
+
+    private String dibujarSolucion(Lista<Integer[]> solucion){
+        int i = 0;
+        String r="";
+        for(Integer[] m: solucion){
+            if(i<solucion.getElementos()-1)
+                r+=dibujaLinea(m,solucion.get(i+1));
+            i++;
+        }
+        return r;
+    }
+
+    private String dibujaLinea(Integer[] m, Integer[] n){
+        return "<line x1='" + ((m[0]+1.5)*60)+ "' y1='" + ((m[1]+1.5)*60) + "' x2='" + ((n[0]+1.5)*60) + "' y2='" + ((n[1]+1.5)*60) + "' stroke='red' stroke-width='6' /> " + '\n';
     }
     private String dibujarArriba(int posicionX, int posicionY){
         return "<line x1='" + (posicionX*60)+ "' y1='" + (posicionY*60) + "' x2='" + ((posicionX+1)*60) + "' y2='" + (posicionY*60) + "' stroke='black' stroke-width='6' /> " + '\n';

@@ -1,5 +1,6 @@
 package mx.unam.ciencias.edd.proyecto3;
 
+import mx.unam.ciencias.edd.Diccionario;
 import mx.unam.ciencias.edd.Grafica;
 import mx.unam.ciencias.edd.Lista;
 import mx.unam.ciencias.edd.VerticeGrafica;
@@ -79,87 +80,77 @@ public class RealizadorLaberintos {
     public void conectar(){
         int i=0;
         for (Celda c : grafica){
-            try{
-                Celda ci=null;
-                if(celdaSup(c.valor)){
-                    ci= grafica.vertice(new Celda(c.x,c.y-1)).get();
-                    int suma=ci.getValor()&0xFF+c.getValor()&0xFF;
+            Celda ci=null;
+            if(celdaSup(c.valor)){
+                ci= grafica.vertice(new Celda(c.x,c.y-1)).get();
+                int suma=(ci.getValor()&0xFF)+(c.getValor()&0xFF);
+                try{
                     grafica.conecta(c,ci,suma);
+                }catch (NoSuchElementException n){} catch (IllegalArgumentException il){}
+            }
+            if(celdaIzq(c.valor)){
+               if(c.getX()==0) {
+                   ini=c;
+               }
+               else{
+                   ci= grafica.vertice(new Celda(c.x-1,c.y)).get();
+                   int suma=(ci.getValor()&0xFF)+(c.getValor()&0XFF);
+                   try{
+                       grafica.conecta(c,ci,suma);
+                   }catch (NoSuchElementException n){} catch (IllegalArgumentException il){}
+               }
+            }
+            if(celdaDer(c.valor)){
+                if(c.getX()==arreglo[0].length-1) {
+                    fin=c;
                 }
-                if(celdaIzq(c.valor)){
-                    if(c.getX()==0) {
-                        ini=c;
-                    }
-                    else{
-                        ci= grafica.vertice(new Celda(c.x-1,c.y)).get();
-                        int suma=ci.getValor()&0xFF+c.getValor()&0XFF;
+                else{
+                    ci= grafica.vertice(new Celda(c.x+1,c.y)).get();
+                    int suma=(ci.getValor()&0XFF)+(c.getValor()&0XFF);
+                    try{
                         grafica.conecta(c,ci,suma);
+                    }catch (NoSuchElementException n){
+                    } catch (IllegalArgumentException il){
                     }
-                }
-                if(celdaDer(c.valor)){
-                    if(c.getX()==arreglo[0].length-1) {
-                        fin=c;
-                    }
-                    else{
-                        ci= grafica.vertice(new Celda(c.x+1,c.y)).get();
-                        int suma=ci.getValor()&0XFF+c.getValor()&0XFF;
-                        if(i<10)System.out.println(c.getValor()&0xFF);
-                        grafica.conecta(c,ci,suma);
-                    }
-                }
-                if(celdaInf(c.valor)){
-                    ci= (Celda) grafica.vertice(new Celda(c.x,c.y+1)).get();
-                    int suma=ci.getValor()&0XFF+c.getValor()&0XFF;
-                    if(i<10)System.out.println(c.getValor()&0xFF);
-                    grafica.conecta(c,ci,suma);
                 }
             }
-            catch (NoSuchElementException w){}catch (IllegalArgumentException m){}
-            i++;
-
-        }
-        System.out.println(grafica.esConexa());
-        prueba();
-    }
-
-    private void prueba(){
-        int i=0;
-        for(Celda c : grafica){
-            if(i>100 &i<110) {
-                System.out.println(c);
-
-                System.out.println(c.valor & 2);
-                System.out.println(c.valor & 4);
-                System.out.println(c.valor & 1);
-                System.out.println(c.valor & 8);
-                System.out.println("---------------------------");
-                for (VerticeGrafica<Celda> ci : grafica.vertice(c).vecinos()) {
-                    System.out.println(ci.get());
-                }
-                System.out.println("{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{");
-
+            if(celdaInf(c.valor)){
+                ci= (Celda) grafica.vertice(new Celda(c.x,c.y+1)).get();
+                int suma=(ci.getValor()&0XFF)+(c.getValor()&0XFF);
+                try{
+                    grafica.conecta(c,ci,suma);
+                }catch (NoSuchElementException n){} catch (IllegalArgumentException il){}
             }
             i++;
         }
     }
-
-    public String resolver(){
-        System.out.println(ini+""+fin);
+    public Lista<Integer[]> resolver(){
         Lista<VerticeGrafica<Celda>> camino=grafica.trayectoriaMinima(ini,fin);
-        System.out.println(camino);
-        return camino.toString();
+        Lista<Integer[]> r = new Lista<>();
+        for(VerticeGrafica c: camino){
+            Integer[] m = new Integer[2];
+            Celda ci = (Celda) c.get();
+            m[0]=ci.getX();
+            m[1]=ci.getY();
+            r.agrega(m);
+        }
+        return r;
     }
     private boolean celdaSup(byte b){
+        b&=15;
         return (b & 2) == 0;
     }
     private boolean celdaIzq(byte b){
+        b&=15;
         return (b & 4) == 0;
     }
 
     private boolean celdaDer(byte b){
+        b&=15;
         return (b & 1) == 0;
     }
     private boolean celdaInf(byte b){
+        b&=15;
         return (b & 8) == 0;
     }
 

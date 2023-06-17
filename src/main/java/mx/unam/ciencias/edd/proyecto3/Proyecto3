@@ -1,0 +1,7 @@
+{(Celda{x=0, y=0, valor=6}, Celda{x=0, y=1, valor=20}),
+(Celda{x=1, y=0, valor=10}, Celda{x=2, y=0, valor=115}),
+(Celda{x=0, y=1, valor=20}, Celda{x=1, y=1, valor=-37}),
+(Celda{x=0, y=1, valor=20}, Celda{x=0, y=2, valor=-55}),
+(Celda{x=2, y=1, valor=-123}, Celda{x=2, y=2, valor=88}),
+(Celda{x=1, y=2, valor=-66}, Celda{x=2, y=2, valor=88}), }
+

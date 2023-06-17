@@ -93,8 +93,6 @@ public class CreadorLaberintos {
                 arbolGenerador.agrega(celda);
             }
         grafica=graficaConexa();
-        //System.out.println(esCiclo(grafica));
-        //System.out.println(esCiclo(arbolGenerador));
         kruskal();
         int m=r.nextInt(filas);
         int f=r.nextInt(filas);
@@ -105,7 +103,7 @@ public class CreadorLaberintos {
             else if(c.getX()==columnas-1 && c.getY()==f)
                 c.setValor((byte)(c.valor^1));
             laberinto[i]=c.valor;
-            System.out.println(laberinto[i]&0xFF&15);
+            //System.out.println(laberinto[i]&0xFF&15);
             i++;
         }
         return laberinto;
@@ -132,14 +130,12 @@ public class CreadorLaberintos {
             }
             i++;
         }
-        //System.out.println(arbolGenerador);
         return grafica;
     }
     private boolean esCiclo(Grafica<Celda> celdas){
         Lista<Celda> visitados= new Lista<>();
         for(Celda v: celdas){
-            boolean b=(tieneCiclo(celdas,v,null,visitados));
-            if(!(visitados.contiene(v) )&& tieneCiclo(celdas ,v,null,visitados))
+            if(!(visitados.contiene(v)) && tieneCiclo(celdas ,v,null,visitados))
                 return true;
         }
         return false;
@@ -149,73 +145,66 @@ public class CreadorLaberintos {
         visitados.agrega(c);
         for(VerticeGrafica vecino : celdas.vertice(c).vecinos()){
             Celda celda = (Celda) vecino.get();
-            if(!visitados.contiene(celda))
-                if(tieneCiclo(celdas,celda,c,visitados)){
-                    return true;}
-            else if(celda.equals(padre)){
-                return false;}
-            else{
-                return true;}
+            if(!visitados.contiene(celda)) {
+                if (tieneCiclo(celdas, celda, c, visitados)) {
+                    return true;
+                }
+            }
+            else if (!celda.equals(padre)) {
+                return true;
+            }
         }
         return false;
     }
     private void kruskal(){
-        for(Celda c : grafica){
-            Lista<Celda> vecinos= new Lista<>();
-            for(VerticeGrafica ci: grafica.vertice(c).vecinos()){
+        Lista<Celda> vertices= new Lista<Celda>();
+        for(Celda c: grafica)
+            vertices.agrega(c);
+        vertices=Lista.mergeSort(vertices);
+        for(Celda c: vertices) {
+            Lista<Celda> vecinos = new Lista<>();
+            for (VerticeGrafica ci : grafica.vertice(c).vecinos()) {
                 Celda celda = (Celda) ci.get();
                 vecinos.agrega(celda);
             }
-            int m = r.nextInt(vecinos.getElementos());
-            Celda ve= vecinos.get(m);
-            if(!arbolGenerador.sonVecinos(c,ve))
-                arbolGenerador.conecta(c,ve);
-            while((esCiclo(arbolGenerador) || arbolGenerador.sonVecinos(c,ve) )&& vecinos.esVacia()){
-                arbolGenerador.desconecta(c,ve);
-                vecinos.elimina(ve);
-                if(m>=vecinos.getElementos()&&vecinos.getElementos()!=0)
-                    m--;
-                if (vecinos.getElementos()==0)
-                    break;
-                ve=vecinos.get(m);
-                if(!arbolGenerador.sonVecinos(c,ve))
-                    arbolGenerador.conecta(c,ve);
+            vecinos = Lista.mergeSort(vecinos);
+            while (!vecinos.esVacia()) {
+                Celda ve = vecinos.getPrimero();
+                vecinos.eliminaPrimero();
+                if (arbolGenerador.sonVecinos(ve, c))
+                    continue;
+                arbolGenerador.conecta(ve, c);
+                if (esCiclo(arbolGenerador)) {
+                    arbolGenerador.desconecta(ve, c);
+                }
+                else{
+                    byte va = (byte) (c.valor & 15);
+                    byte otro = (byte) (ve.valor & 15);
+                    byte ors = analiza(c, ve);
+                    byte l = 0;
+                    va &= ors;
+                    va |= 240;
+                    switch (ors) {
+                        case 14:
+                            l = 11;
+                            break;
+                        case 11:
+                            l = 14;
+                            break;
+                        case 7:
+                            l = 13;
+                            break;
+                        case 13:
+                            l = 7;
+                            break;
+                    }
+                    otro &= l;
+                    otro |= 240;
+                    c.setValor((byte) (va & c.valor));
+                    ve.setValor((byte) (otro & ve.valor));
+                }
             }
-            byte va = (byte)(c.valor&15);//(byte)((c.valor<<4)|15);
-            byte otro= (byte)(ve.valor&15);
-            System.out.println(va);
-            System.out.println(otro);
-            byte ors= analiza(c,ve);
-            byte l=0;
-            va&=ors;
-            va|=240;
-            switch (ors){
-                case 14:
-                    l=11;
-                    break;
-                case 11:
-                    l=14;
-                    break;
-                case 7:
-                    l=13;
-                    break;
-                case 13:
-                    l=7;
-                    break;
-            }
-            otro&=l;
-            otro|=240;
-            System.out.println(c);
-            System.out.println(ve);
-            System.out.println((byte)(va&0xFF));
-            System.out.println((byte)(otro&0XFF));
-            c.setValor((byte)(va&c.valor));
-            ve.setValor((byte)(otro&ve.valor));
-            System.out.println(c);
-            System.out.println(ve);
-
         }
-        System.out.println(arbolGenerador);
     }
 
     private int suma(int valor, int valor2){

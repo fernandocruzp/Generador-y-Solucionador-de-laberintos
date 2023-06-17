@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg width='340' height='340' >
+<g><line x1='60' y1='60' x2='120' y2='60' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='60' x2='60' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='120' x2='60' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='240' x2='120' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='240' x2='120' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='240' x2='60' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='60' y1='300' x2='120' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='60' x2='180' y2='60' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='120' x2='180' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='120' x2='180' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='120' x2='180' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='180' x2='180' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='180' x2='180' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='240' x2='180' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='240' x2='180' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='120' y1='300' x2='180' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='60' x2='240' y2='60' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='120' x2='180' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='180' x2='240' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='180' x2='240' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='180' y1='300' x2='240' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='60' x2='300' y2='60' stroke='black' stroke-width='6' /> 
+<line x1='300' y1='60' x2='300' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='120' x2='300' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='120' x2='300' y2='120' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='180' x2='300' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='180' x2='300' y2='180' stroke='black' stroke-width='6' /> 
+<line x1='300' y1='180' x2='300' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='240' x2='300' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='240' x2='300' y2='240' stroke='black' stroke-width='6' /> 
+<line x1='300' y1='240' x2='300' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='240' y1='300' x2='300' y2='300' stroke='black' stroke-width='6' /> 
+<line x1='90.0' y1='210.0' x2='90.0' y2='150.0' stroke='red' stroke-width='6' /> 
+<line x1='90.0' y1='150.0' x2='90.0' y2='90.0' stroke='red' stroke-width='6' /> 
+<line x1='90.0' y1='90.0' x2='150.0' y2='90.0' stroke='red' stroke-width='6' /> 
+<line x1='150.0' y1='90.0' x2='210.0' y2='90.0' stroke='red' stroke-width='6' /> 
+<line x1='210.0' y1='90.0' x2='210.0' y2='150.0' stroke='red' stroke-width='6' /> 
+<line x1='210.0' y1='150.0' x2='270.0' y2='150.0' stroke='red' stroke-width='6' /> 
+</g>
+</svg>

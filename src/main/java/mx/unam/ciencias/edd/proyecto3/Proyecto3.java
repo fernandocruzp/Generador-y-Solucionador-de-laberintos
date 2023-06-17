@@ -14,15 +14,15 @@ public class Proyecto3 {
         else{
             CreadorLaberintos cr = new CreadorLaberintos(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
             byte [] m = cr.generarLaberinto();
-            /**byte[] a={0x4d,0x5a,0x45,(byte) Integer.parseInt(args[0]),(byte)Integer.parseInt(args[1])};
-
+            byte[] a={0x4d,0x41,0x5a,0x45,(byte) Integer.parseInt(args[0]),(byte)Integer.parseInt(args[1])};
             OutputStream outputStream = new BufferedOutputStream(System.out);
             try {
+                outputStream.write(a);
                 outputStream.write(m);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            outputStream.flush();**/
+            outputStream.flush();
         }
     }
 
